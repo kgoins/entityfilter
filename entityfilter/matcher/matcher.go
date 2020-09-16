@@ -8,4 +8,5 @@ import "github.com/kgoins/entityfilter/entityfilter/filter"
 // construction. Input filters are run against that data source.
 type Matcher interface {
 	GetMatches([]filter.EntityFilter) ([]interface{}, error)
+	Matches(interface{}, []filter.EntityFilter) (bool, error)
 }
