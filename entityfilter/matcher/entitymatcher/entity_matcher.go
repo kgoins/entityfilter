@@ -3,6 +3,7 @@ package entitymatcher
 import (
 	"errors"
 	"reflect"
+	"unsafe"
 
 	"github.com/kgoins/entityfilter/entityfilter/filter"
 	"github.com/spf13/cast"
@@ -11,23 +12,21 @@ import (
 // EntityMatcher implements Matcher for matching
 // filters against in-memory go objects
 type EntityMatcher struct {
-	inputs     []interface{}
+	inputs     interface{}
 	conditions ConditionMap
 }
 
 // NewEntityMatcher constructs a new EntityMatcher
-func NewEntityMatcher(inputs []interface{}) EntityMatcher {
+func NewEntityMatcher(inputs interface{}) EntityMatcher {
 	return EntityMatcher{
 		inputs:     inputs,
 		conditions: NewConditionMap(),
 	}
 }
 
-func (m EntityMatcher) matchesFilter(entity interface{}, filter filter.EntityFilter) (bool, error) {
-	reflectedEntity := reflect.Indirect(reflect.ValueOf(entity))
-
-	entityVal := reflectedEntity.FieldByName(filter.AttributeName)
-	if !entityVal.IsValid() {
+func (m EntityMatcher) matchesFilter(entity reflect.Value, filter filter.EntityFilter) (bool, error) {
+	entityField := entity.FieldByName(filter.AttributeName)
+	if !entityField.IsValid() {
 		return false, errors.New("unable to find attribute value on input entity")
 	}
 
@@ -35,7 +34,12 @@ func (m EntityMatcher) matchesFilter(entity interface{}, filter filter.EntityFil
 		return true, nil
 	}
 
-	entityValStr, err := cast.ToStringE(entityVal)
+	entityField = reflect.NewAt(
+		entityField.Type(),
+		unsafe.Pointer(entityField.UnsafeAddr()),
+	).Elem()
+
+	entityValStr, err := cast.ToStringE(entityField.Interface())
 	if err != nil {
 		return false, err
 	}
@@ -47,7 +51,7 @@ func (m EntityMatcher) matchesFilter(entity interface{}, filter filter.EntityFil
 	)
 }
 
-func (m EntityMatcher) matchesFilters(entity interface{}, filters []filter.EntityFilter) (bool, error) {
+func (m EntityMatcher) matchesFilters(entity reflect.Value, filters ...filter.EntityFilter) (bool, error) {
 	for _, filter := range filters {
 		matched, err := m.matchesFilter(entity, filter)
 		if err != nil {
@@ -62,13 +66,39 @@ func (m EntityMatcher) matchesFilters(entity interface{}, filters []filter.Entit
 	return true, nil
 }
 
+func (m EntityMatcher) matchSingleEntity(
+	entity interface{},
+	filters ...filter.EntityFilter,
+) ([]interface{}, error) {
+
+	reflectedEntity := reflect.ValueOf(entity)
+	matches, err := m.matchesFilters(reflectedEntity, filters...)
+	if err != nil {
+		return nil, err
+	}
+
+	if !matches {
+		return []interface{}{}, nil
+	}
+
+	return []interface{}{entity}, nil
+}
+
 // GetMatches returns all input entities matching the set of provided filters.
 // Any errors during filter processing will cause further processing to halt.
-func (m EntityMatcher) GetMatches(filters []filter.EntityFilter) ([]interface{}, error) {
+func (m EntityMatcher) GetMatches(filters ...filter.EntityFilter) ([]interface{}, error) {
+
+	inputType := reflect.TypeOf(m.inputs).Kind()
+	if inputType != reflect.Slice {
+		return m.matchSingleEntity(m.inputs, filters...)
+	}
+
+	inputSlice := reflect.ValueOf(m.inputs)
 	results := make([]interface{}, 0)
 
-	for _, entity := range m.inputs {
-		matched, err := m.matchesFilters(entity, filters)
+	for i := 0; i < inputSlice.Len(); i++ {
+		entity := inputSlice.Index(i)
+		matched, err := m.matchesFilters(entity, filters...)
 		if err != nil {
 			return nil, err
 		}

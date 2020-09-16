@@ -7,6 +7,5 @@ import "github.com/kgoins/entityfilter/entityfilter/filter"
 // Data sources are configured by individual implementations during
 // construction. Input filters are run against that data source.
 type Matcher interface {
-	GetMatches([]filter.EntityFilter) ([]interface{}, error)
-	Matches(interface{}, []filter.EntityFilter) (bool, error)
+	GetMatches(...filter.EntityFilter) ([]interface{}, error)
 }
