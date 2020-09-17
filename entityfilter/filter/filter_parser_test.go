@@ -37,3 +37,16 @@ func TestFilterParser_InvalidFilterCondition(t *testing.T) {
 		t.Fatal("Failed to error on invalid filter condition")
 	}
 }
+
+func TestFilterParser_CompositeFilter(t *testing.T) {
+	filterStr := "username:=myuser,description:~vpn,myfield:!=thisvalue"
+
+	filters, err := filter.ParseFilterStr(filterStr)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	if len(filters) != 3 {
+		t.Fatal("Unable to construct composite filter")
+	}
+}
