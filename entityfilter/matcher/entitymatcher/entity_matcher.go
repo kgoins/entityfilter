@@ -104,7 +104,7 @@ func (m EntityMatcher) GetMatches(filters ...filter.EntityFilter) ([]interface{}
 		}
 
 		if matched {
-			results = append(results, entity)
+			results = append(results, entity.Interface())
 		}
 	}
 
