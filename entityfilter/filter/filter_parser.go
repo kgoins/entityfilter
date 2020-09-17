@@ -2,7 +2,6 @@ package filter
 
 import (
 	"errors"
-	"sort"
 	"strings"
 )
 
@@ -41,11 +40,12 @@ func buildEntityFilter(filterStr string) (EntityFilter, error) {
 	return filter, nil
 }
 
-func BuildEntityFilter(filterStrings []string) ([]EntityFilter, error) {
-	filter := []EntityFilter{}
-	sort.Sort(filterByLength(FilterConditions))
+// ParseFilterStr constructs an array of entity filters from a filter string
+func ParseFilterStr(filterStr string) ([]EntityFilter, error) {
+	filterParts := strings.Split(filterStr, ",")
 
-	for _, filterStr := range filterStrings {
+	filter := []EntityFilter{}
+	for _, filterStr := range filterParts {
 		if strings.TrimSpace(filterStr) == "" {
 			continue
 		}
