@@ -1,4 +1,4 @@
-module github.com/kgoins/entityfilter
+module gitlab.rule10.net/rule10/entityfilter
 
 go 1.14
 

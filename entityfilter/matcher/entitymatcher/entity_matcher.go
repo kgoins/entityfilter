@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/kgoins/entityfilter/entityfilter/filter"
+	"gitlab.rule10.net/rule10/entityfilter/entityfilter/filter"
 	"github.com/spf13/cast"
 )
 

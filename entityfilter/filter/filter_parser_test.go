@@ -3,7 +3,7 @@ package filter_test
 import (
 	"testing"
 
-	"github.com/kgoins/entityfilter/entityfilter/filter"
+	"gitlab.rule10.net/rule10/entityfilter/entityfilter/filter"
 )
 
 func TestFilterParser_SingleFilterSingleCondition(t *testing.T) {
