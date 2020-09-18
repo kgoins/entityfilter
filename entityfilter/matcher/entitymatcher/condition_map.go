@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/kgoins/entityfilter/entityfilter/filter"
+	"gitlab.rule10.net/rule10/entityfilter/entityfilter/filter"
 )
 
 type FilterFunc func(string, string) (bool, error)

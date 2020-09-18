@@ -3,8 +3,8 @@ package entitymatcher_test
 import (
 	"testing"
 
-	"github.com/kgoins/entityfilter/entityfilter/filter"
-	"github.com/kgoins/entityfilter/entityfilter/matcher/entitymatcher"
+	"gitlab.rule10.net/rule10/entityfilter/entityfilter/filter"
+	"gitlab.rule10.net/rule10/entityfilter/entityfilter/matcher/entitymatcher"
 )
 
 type TestStruct struct {

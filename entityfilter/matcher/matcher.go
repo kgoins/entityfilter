@@ -1,6 +1,6 @@
 package matcher
 
-import "github.com/kgoins/entityfilter/entityfilter/filter"
+import "gitlab.rule10.net/rule10/entityfilter/entityfilter/filter"
 
 // Matcher represents the ability to determine if a given data
 // source contains any entities matching the input filter conditions.
