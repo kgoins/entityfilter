@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+const FILTER_WILDCARD_CHAR string = "*"
+
 func getFilterCondition(filterStr string, conditions []FilterCondition) (FilterCondition, error) {
 	for _, condition := range conditions {
 		if strings.Contains(filterStr, string(condition)) {
@@ -28,7 +30,7 @@ func buildEntityFilter(filterStr string) (EntityFilter, error) {
 	}
 
 	filterValue := filterParts[1]
-	isWildcard := filterValue == "*"
+	isWildcard := strings.Contains(filterValue, FILTER_WILDCARD_CHAR)
 
 	filter := EntityFilter{
 		AttributeName: filterParts[0],

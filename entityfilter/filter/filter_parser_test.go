@@ -50,3 +50,22 @@ func TestFilterParser_CompositeFilter(t *testing.T) {
 		t.Fatal("Unable to construct composite filter")
 	}
 }
+
+func TestFilterParser_CompositeWithWildcard(t *testing.T) {
+	filterStr := "username:=my*user,description:~vpn,myfield:!=thisvalue*"
+
+	filters, err := filter.ParseFilterStr(filterStr)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	targetFilter := filters[0]
+	if !targetFilter.IsWildcard {
+		t.Fatal("Unable to identify wildcard in filter str")
+	}
+
+	targetFilter = filters[2]
+	if !targetFilter.IsWildcard {
+		t.Fatal("Unable to identify wildcard in filter str")
+	}
+}
