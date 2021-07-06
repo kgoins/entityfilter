@@ -3,7 +3,7 @@ package filter_test
 import (
 	"testing"
 
-	"github.com/kgoins/entityfilter/entityfilter/filter"
+	filter "github.com/kgoins/entityfilter/entityfilter"
 )
 
 func TestFilterParser_SingleFilterSingleCondition(t *testing.T) {

@@ -3,8 +3,8 @@ package entitymatcher_test
 import (
 	"testing"
 
-	"github.com/kgoins/entityfilter/entityfilter/filter"
-	"github.com/kgoins/entityfilter/entityfilter/matcher/entitymatcher"
+	filter "github.com/kgoins/entityfilter/entityfilter"
+	"github.com/kgoins/entityfilter/entitymatcher"
 )
 
 type TestStruct struct {
@@ -21,9 +21,9 @@ func TestEntityMatcher_MatchSingleFilterMultTypes(t *testing.T) {
 	}
 
 	testStructs := []TestStruct{
-		TestStruct{myint: 0, mystr: "hello"},
-		TestStruct{myint: 1, mystr: "hello world"},
-		TestStruct{myint: 2, mystr: "Hello World!"},
+		{myint: 0, mystr: "hello"},
+		{myint: 1, mystr: "hello world"},
+		{myint: 2, mystr: "Hello World!"},
 	}
 
 	matcher := entitymatcher.NewEntityMatcher(testStructs)
@@ -41,9 +41,9 @@ func TestEntityMatcher_CompositeFilterMultResults(t *testing.T) {
 	testFilterStr := "myint:!=0,mystr:~hello"
 
 	testStructs := []TestStruct{
-		TestStruct{myint: 0, mystr: "hello"},
-		TestStruct{myint: 1, mystr: "hello world"},
-		TestStruct{myint: 2, mystr: "hello world!"},
+		{myint: 0, mystr: "hello"},
+		{myint: 1, mystr: "hello world"},
+		{myint: 2, mystr: "hello world!"},
 	}
 
 	testFilter, err := filter.ParseFilterStr(testFilterStr)

@@ -14,7 +14,7 @@ func getFilterCondition(filterStr string, conditions []FilterCondition) (FilterC
 		}
 	}
 
-	return FILTER_EQUALS, errors.New("Unable to identify filter condition")
+	return FILTER_EQUALS, errors.New("unable to identify filter condition")
 }
 
 func buildEntityFilter(filterStr string) (EntityFilter, error) {
@@ -26,7 +26,7 @@ func buildEntityFilter(filterStr string) (EntityFilter, error) {
 	filterParts := strings.Split(filterStr, string(condition))
 	if len(filterParts) != 2 {
 		return EntityFilter{},
-			errors.New("Invalid filter format: " + filterStr)
+			errors.New("invalid filter format: " + filterStr)
 	}
 
 	filterValue := filterParts[1]

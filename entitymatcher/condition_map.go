@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/kgoins/entityfilter/entityfilter/filter"
+	filter "github.com/kgoins/entityfilter/entityfilter"
 )
 
 type FilterFunc func(string, string) (bool, error)
