@@ -13,12 +13,13 @@ type TestStruct struct {
 }
 
 func TestEntityMatcher_MatchSingleFilterMultTypes(t *testing.T) {
-	testFilter := filter.FilterEntry{
+	filterEntry := filter.FilterEntry{
 		AttributeName: "myint",
 		Value:         "1",
 		Condition:     filter.FILTER_EQUALS,
 		IsWildcard:    false,
 	}
+	filter := filter.NewEntityFilter(filterEntry)
 
 	testStructs := []TestStruct{
 		{myint: 0, mystr: "hello"},
@@ -27,7 +28,7 @@ func TestEntityMatcher_MatchSingleFilterMultTypes(t *testing.T) {
 	}
 
 	matcher := entitymatcher.NewEntityMatcher(testStructs)
-	results, err := matcher.GetMatches(testFilter)
+	results, err := matcher.GetMatches(filter)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -52,7 +53,7 @@ func TestEntityMatcher_CompositeFilterMultResults(t *testing.T) {
 	}
 
 	matcher := entitymatcher.NewEntityMatcher(testStructs)
-	results, err := matcher.GetMatches(testFilter...)
+	results, err := matcher.GetMatches(testFilter)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

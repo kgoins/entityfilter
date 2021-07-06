@@ -86,11 +86,11 @@ func (m EntityMatcher) matchSingleEntity(
 
 // GetMatches returns all input entities matching the set of provided filters.
 // Any errors during filter processing will cause further processing to halt.
-func (m EntityMatcher) GetMatches(filters ...filter.FilterEntry) ([]interface{}, error) {
+func (m EntityMatcher) GetMatches(filter filter.EntityFilter) ([]interface{}, error) {
 
 	inputType := reflect.TypeOf(m.inputs).Kind()
 	if inputType != reflect.Slice {
-		return m.matchSingleEntity(m.inputs, filters...)
+		return m.matchSingleEntity(m.inputs, filter.GetEntries()...)
 	}
 
 	inputSlice := reflect.ValueOf(m.inputs)
@@ -98,7 +98,7 @@ func (m EntityMatcher) GetMatches(filters ...filter.FilterEntry) ([]interface{},
 
 	for i := 0; i < inputSlice.Len(); i++ {
 		entity := inputSlice.Index(i)
-		matched, err := m.matchesFilters(entity, filters...)
+		matched, err := m.matchesFilters(entity, filter.GetEntries()...)
 		if err != nil {
 			return nil, err
 		}
