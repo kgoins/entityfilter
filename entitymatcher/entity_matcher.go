@@ -24,7 +24,7 @@ func NewEntityMatcher(inputs interface{}) EntityMatcher {
 	}
 }
 
-func (m EntityMatcher) matchesFilter(entity reflect.Value, filter filter.EntityFilter) (bool, error) {
+func (m EntityMatcher) matchesFilter(entity reflect.Value, filter filter.FilterEntry) (bool, error) {
 	entityField := entity.FieldByName(filter.AttributeName)
 	if !entityField.IsValid() {
 		return false, errors.New("unable to find attribute value on input entity")
@@ -51,7 +51,7 @@ func (m EntityMatcher) matchesFilter(entity reflect.Value, filter filter.EntityF
 	)
 }
 
-func (m EntityMatcher) matchesFilters(entity reflect.Value, filters ...filter.EntityFilter) (bool, error) {
+func (m EntityMatcher) matchesFilters(entity reflect.Value, filters ...filter.FilterEntry) (bool, error) {
 	for _, filter := range filters {
 		matched, err := m.matchesFilter(entity, filter)
 		if err != nil {
@@ -68,7 +68,7 @@ func (m EntityMatcher) matchesFilters(entity reflect.Value, filters ...filter.En
 
 func (m EntityMatcher) matchSingleEntity(
 	entity interface{},
-	filters ...filter.EntityFilter,
+	filters ...filter.FilterEntry,
 ) ([]interface{}, error) {
 
 	reflectedEntity := reflect.ValueOf(entity)
@@ -86,7 +86,7 @@ func (m EntityMatcher) matchSingleEntity(
 
 // GetMatches returns all input entities matching the set of provided filters.
 // Any errors during filter processing will cause further processing to halt.
-func (m EntityMatcher) GetMatches(filters ...filter.EntityFilter) ([]interface{}, error) {
+func (m EntityMatcher) GetMatches(filters ...filter.FilterEntry) ([]interface{}, error) {
 
 	inputType := reflect.TypeOf(m.inputs).Kind()
 	if inputType != reflect.Slice {

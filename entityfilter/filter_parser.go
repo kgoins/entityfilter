@@ -17,22 +17,22 @@ func getFilterCondition(filterStr string, conditions []FilterCondition) (FilterC
 	return FILTER_EQUALS, errors.New("unable to identify filter condition")
 }
 
-func buildEntityFilter(filterStr string) (EntityFilter, error) {
+func buildEntityFilter(filterStr string) (FilterEntry, error) {
 	condition, err := getFilterCondition(filterStr, FilterConditions)
 	if err != nil {
-		return EntityFilter{}, err
+		return FilterEntry{}, err
 	}
 
 	filterParts := strings.Split(filterStr, string(condition))
 	if len(filterParts) != 2 {
-		return EntityFilter{},
+		return FilterEntry{},
 			errors.New("invalid filter format: " + filterStr)
 	}
 
 	filterValue := filterParts[1]
 	isWildcard := strings.Contains(filterValue, FILTER_WILDCARD_CHAR)
 
-	filter := EntityFilter{
+	filter := FilterEntry{
 		AttributeName: filterParts[0],
 		Value:         filterValue,
 		Condition:     condition,
@@ -43,10 +43,10 @@ func buildEntityFilter(filterStr string) (EntityFilter, error) {
 }
 
 // ParseFilterStr constructs an array of entity filters from a filter string
-func ParseFilterStr(filterStr string) ([]EntityFilter, error) {
+func ParseFilterStr(filterStr string) ([]FilterEntry, error) {
 	filterParts := strings.Split(filterStr, ",")
 
-	filter := []EntityFilter{}
+	filter := []FilterEntry{}
 	for _, filterStr := range filterParts {
 		if strings.TrimSpace(filterStr) == "" {
 			continue

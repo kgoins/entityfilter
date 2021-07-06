@@ -13,7 +13,7 @@ type TestStruct struct {
 }
 
 func TestEntityMatcher_MatchSingleFilterMultTypes(t *testing.T) {
-	testFilter := filter.EntityFilter{
+	testFilter := filter.FilterEntry{
 		AttributeName: "myint",
 		Value:         "1",
 		Condition:     filter.FILTER_EQUALS,
