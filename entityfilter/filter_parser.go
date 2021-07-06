@@ -17,7 +17,7 @@ func getFilterCondition(filterStr string, conditions []FilterCondition) (FilterC
 	return FILTER_EQUALS, errors.New("unable to identify filter condition")
 }
 
-func buildEntityFilter(filterStr string) (FilterEntry, error) {
+func buildFilterEntry(filterStr string) (FilterEntry, error) {
 	condition, err := getFilterCondition(filterStr, FilterConditions)
 	if err != nil {
 		return FilterEntry{}, err
@@ -43,21 +43,21 @@ func buildEntityFilter(filterStr string) (FilterEntry, error) {
 }
 
 // ParseFilterStr constructs an array of entity filters from a filter string
-func ParseFilterStr(filterStr string) ([]FilterEntry, error) {
+func ParseFilterStr(filterStr string) (EntityFilter, error) {
 	filterParts := strings.Split(filterStr, ",")
 
-	filter := []FilterEntry{}
+	filter := NewEntityFilter()
 	for _, filterStr := range filterParts {
 		if strings.TrimSpace(filterStr) == "" {
 			continue
 		}
 
-		newFilter, err := buildEntityFilter(filterStr)
+		newEntry, err := buildFilterEntry(filterStr)
 		if err != nil {
-			return nil, err
+			return filter, err
 		}
 
-		filter = append(filter, newFilter)
+		filter.Add(newEntry)
 	}
 
 	return filter, nil

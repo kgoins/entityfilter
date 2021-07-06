@@ -5,7 +5,27 @@ import (
 	"strings"
 )
 
-type EntityFilter []FilterEntry
+type EntityFilter struct {
+	filter []FilterEntry
+}
+
+func NewEntityFilter(entries ...FilterEntry) EntityFilter {
+	filter := []FilterEntry{}
+	filter = append(filter, entries...)
+	return EntityFilter{filter: filter}
+}
+
+func (f *EntityFilter) Add(entry FilterEntry) {
+	f.filter = append(f.filter, entry)
+}
+
+func (f EntityFilter) GetEntries() []FilterEntry {
+	return f.filter
+}
+
+func (f EntityFilter) Len() int {
+	return len(f.filter)
+}
 
 type FilterEntry struct {
 	AttributeName string
