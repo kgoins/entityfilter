@@ -3,7 +3,7 @@ package filter_test
 import (
 	"testing"
 
-	"github.com/kgoins/entityfilter/entityfilter/filter"
+	filter "github.com/kgoins/entityfilter/entityfilter"
 )
 
 func TestFilterParser_SingleFilterSingleCondition(t *testing.T) {
@@ -14,11 +14,11 @@ func TestFilterParser_SingleFilterSingleCondition(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	if len(filters) != 1 {
+	if filters.Len() != 1 {
 		t.Fatal("Unable to construct filter")
 	}
 
-	myFilter := filters[0]
+	myFilter := filters.GetEntries()[0]
 
 	if myFilter.Condition != filter.FILTER_EQUALS {
 		t.Fatal("Unable to construct filter condition")
@@ -46,7 +46,7 @@ func TestFilterParser_CompositeFilter(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	if len(filters) != 3 {
+	if filters.Len() != 3 {
 		t.Fatal("Unable to construct composite filter")
 	}
 }
@@ -59,12 +59,12 @@ func TestFilterParser_CompositeWithWildcard(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	targetFilter := filters[0]
+	targetFilter := filters.GetEntries()[0]
 	if !targetFilter.IsWildcard {
 		t.Fatal("Unable to identify wildcard in filter str")
 	}
 
-	targetFilter = filters[2]
+	targetFilter = filters.GetEntries()[2]
 	if !targetFilter.IsWildcard {
 		t.Fatal("Unable to identify wildcard in filter str")
 	}
