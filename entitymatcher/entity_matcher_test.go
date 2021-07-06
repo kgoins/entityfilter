@@ -5,60 +5,90 @@ import (
 
 	filter "github.com/kgoins/entityfilter/entityfilter"
 	"github.com/kgoins/entityfilter/entitymatcher"
+	"github.com/stretchr/testify/require"
 )
 
 type TestStruct struct {
-	myint int
-	mystr string
+	MyInt       int
+	MyStr       string
+	secretField string
 }
 
-func TestEntityMatcher_MatchSingleFilterMultTypes(t *testing.T) {
+func getTestStructs() []TestStruct {
+	return []TestStruct{
+		{MyInt: 0, MyStr: "hello"},
+		{MyInt: 1, MyStr: "hello world"},
+		{MyInt: 2, MyStr: "Hello World!"},
+	}
+}
+
+func TestEntityMatcher_MatchSingleEntity(t *testing.T) {
+	r := require.New(t)
+
 	filterEntry := filter.FilterEntry{
-		AttributeName: "myint",
+		AttributeName: "MyInt",
 		Value:         "1",
 		Condition:     filter.FILTER_EQUALS,
 		IsWildcard:    false,
 	}
+
 	filter := filter.NewEntityFilter(filterEntry)
+	testStruct := TestStruct{MyInt: 1, MyStr: "hello"}
 
-	testStructs := []TestStruct{
-		{myint: 0, mystr: "hello"},
-		{myint: 1, mystr: "hello world"},
-		{myint: 2, mystr: "Hello World!"},
+	matcher := entitymatcher.NewStructEntityMatcher()
+	matches, err := matcher.Matches(testStruct, filter)
+	r.NoError(err)
+	r.True(matches)
+}
+
+func TestEntityMatcher_UnexportedField(t *testing.T) {
+	r := require.New(t)
+
+	filterEntry := filter.FilterEntry{
+		AttributeName: "secretField",
+		Value:         "x",
+		Condition:     filter.FILTER_EQUALS,
+		IsWildcard:    false,
 	}
 
-	matcher := entitymatcher.NewEntityMatcher(testStructs)
-	results, err := matcher.GetMatches(filter)
-	if err != nil {
-		t.Fatal(err.Error())
+	filter := filter.NewEntityFilter(filterEntry)
+	testStruct := TestStruct{MyInt: 1, MyStr: "hello", secretField: "x"}
+
+	matcher := entitymatcher.NewStructEntityMatcher()
+	_, err := matcher.Matches(testStruct, filter)
+	r.Error(err)
+}
+
+func TestEntityMatcher_MatchSingleFilterMultEntities(t *testing.T) {
+	r := require.New(t)
+
+	filterEntry := filter.FilterEntry{
+		AttributeName: "MyInt",
+		Value:         "1",
+		Condition:     filter.FILTER_EQUALS,
+		IsWildcard:    false,
 	}
 
-	if len(results) != 1 {
-		t.Fatal("Wrong number of matches returned")
-	}
+	filter := filter.NewEntityFilter(filterEntry)
+	testStructs := getTestStructs()
+
+	matcher := entitymatcher.NewStructEntityMatcher()
+	results, err := matcher.GetMatches(testStructs, filter)
+	r.NoError(err)
+	r.Equal(1, len(results))
 }
 
 func TestEntityMatcher_CompositeFilterMultResults(t *testing.T) {
-	testFilterStr := "myint:!=0,mystr:~hello"
+	r := require.New(t)
 
-	testStructs := []TestStruct{
-		{myint: 0, mystr: "hello"},
-		{myint: 1, mystr: "hello world"},
-		{myint: 2, mystr: "hello world!"},
-	}
+	testFilterStr := "MyInt:!=0,MyStr:~hello"
+	testStructs := getTestStructs()
 
 	testFilter, err := filter.ParseFilterStr(testFilterStr)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
+	r.NoError(err)
 
-	matcher := entitymatcher.NewEntityMatcher(testStructs)
-	results, err := matcher.GetMatches(testFilter)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	if len(results) != 2 {
-		t.Fatal("Wrong number of matches returned")
-	}
+	matcher := entitymatcher.NewStructEntityMatcher()
+	results, err := matcher.GetMatches(testStructs, testFilter)
+	r.NoError(err)
+	r.Equal(1, len(results))
 }
